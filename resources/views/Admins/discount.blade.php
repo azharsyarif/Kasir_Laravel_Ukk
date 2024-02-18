@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+l<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Admin Panel</title>
+    <title>Admin Panel|Data-Discount</title>
     @vite('resources/css/app.css')
 </head>
 <body>
@@ -18,7 +18,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            <a href="pengguna/add-pengguna">ADD DATA </a>
+            <a href="/admin/add-discount">ADD DATA </a>
             </button>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -28,31 +28,35 @@
                             NO
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Username
+                            NAMA DISCOUNT
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Email
+                            PERSENTASE DISCOUNT
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Role
+                            DISCOUNT NOMINAL
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Action
+                            TANGGAL AWAL
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            TANGGAL AKHIR
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($penggunas as $key =>$pengguna)
+                    @foreach($discounts as $key =>$discount)
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="px-6 py-4">{{ $key + 1 }}</td>
-                            <td class="px-6 py-4">{{ $pengguna->username }}</td>
-                            <td class="px-6 py-4">{{ $pengguna->email }}</td>
-                            <td class="px-6 py-4">{{ $pengguna->role }}</td>
+                            <td class="px-6 py-4">{{ $discount->nama_discount}}</td>
+                            <td class="px-6 py-4">{{ $discount->discount_amount }}%</td>
+                            <td class="px-6 py-4">{{ $discount->start_date}}</td>
+                            <td class="px-6 py-4">{{ $discount->end_date}}</td>
                             <td class="px-6 py-4">
                                 <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                    <a href="{{ route('admin.editUser', $pengguna->id) }}">Edit</a>
+                                    <a href="{{ route('discount.detail', $discount->id) }}">DETAIL</a>
                                 </button>
-                                <form action="{{ route('admin.deleteUser', $pengguna->id) }}" method="POST" class="inline">
+                                <form action="{{ route('discount.delete', $discount->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" onclick="return confirm('Are you sure you want to delete this user?')" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
@@ -65,8 +69,7 @@
                 </tbody>
             </table>
         </div>
-        
         </div>
-     </div>
+    </div>
 </body>
 </html>

@@ -10,9 +10,7 @@
 <body>
     <!-- Include the sidebar -->
     @include('Components.sidebar')
-
     <!-- Create a container for the table to apply styling -->
-
     <div class="p-4 sm:ml-64">
         <button type="button" class="text-white bg-[#FF9119] hover:bg-[#FF9119]/80 focus:ring-4 focus:outline-none focus:ring-[#FF9119]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -60,13 +58,19 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4">{{ $product->platform }}</td>
-                            <td class="px-6 py-4">{{ $product->genre }}</td>
+                            <td class="px-6 py-4">
+                                @if($product->genre)
+                                    {{ $product->genre->nama_genre }}
+                                @else
+                                    No Genre
+                                @endif
+                            </td>
                             <td class="px-6 py-4">{{ $product->harga }}</td>
                             <td class="px-6 py-4">
                                 <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                    <a href="#">Edit</a>
+                                    <a href="{{ route('edit-product', $product->id) }}">Edit</a>
                                 </button>
-                                <form action="{{ route('admin.deleteProduct', $product->id) }}" method="POST" class="inline">
+                                <form method="POST" action="{{ route('products.delete', $product->id) }}">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" onclick="return confirm('Are you sure you want to delete this user?')" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
@@ -79,8 +83,6 @@
                 </tbody>
             </table>
         </div>
-        
-        </div>
-     </div>
+    </div>
 </body>
 </html>

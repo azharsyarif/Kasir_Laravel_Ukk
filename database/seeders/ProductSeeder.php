@@ -20,11 +20,13 @@ class ProductSeeder extends Seeder
         //     'genre' => 'RPG',
         //     'harga' => 500000,
         // ]);
+        $genreId = DB::table('genres')->where('nama_genre', 'RACING')->value('id');
+
         DB::table('products')->insert([
             'nama_product' => 'GRAN TURISMO 7',
             'image' => 'https://image.api.playstation.com/vulcan/ap/rnd/202109/1321/yZ7dpmjtHr1olhutHT57IFRh.png',
             'platform' => 'PS5',
-            'genre' => 'RACING',
+            'genre_id' => $genreId, // Gunakan nilai genre_id yang sesuai
             'harga' => 1000000,
         ]);
     }

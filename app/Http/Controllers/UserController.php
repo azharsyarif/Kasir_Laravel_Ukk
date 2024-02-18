@@ -25,6 +25,11 @@ class UserController extends Controller
         // Logic to display the admin screen with user data
         return view('admin', ['penggunas' => $userData]);
     }
+
+    public function showAdminDashboard()
+    {
+        return view('Admins.admin-dashboard');
+    }
     
 
     // METHOD FUNCTION
@@ -33,18 +38,17 @@ class UserController extends Controller
     $credentials = $request->only('email', 'password');
 
     if (Auth::attempt($credentials)) {
-        // Authentication passed
         $user = Auth::user();
         if ($user->role === 'admin') {
-            return redirect()->route('product');
+            return redirect()->route('admin.dashboard');
         } elseif ($user->role === 'kasir') {
-            return redirect()->route('products'); // or specify the URL directly
+            return redirect()->route('home');
         }
     }
 
-    // Authentication failed
     return redirect()->route('login')->with('error', 'Invalid credentials');
 }
+
     
 
     public function authenticate(Request $request)
@@ -64,11 +68,19 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('login');
+        // Cek izin pengguna untuk logout
+        if (Auth::check()) {
+            // Proses logout
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            // Redirect pengguna sesuai dengan role atau halaman utama
+            return redirect()->route('login');
+        } else {
+            // Pengguna tidak terotentikasi, kembalikan 403 (Unauthorized)
+            abort(403);
+        }
     }
     
 }

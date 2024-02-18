@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,4 +31,8 @@ Route::get('/view-api', [ProductController::class, 'view_api'])->name('view_api'
 
 Route::post('/create-product', [ProductController::class, 'create'])->name('create-product');
 
+Route::post('/create-product', [TransactionController::class, 'store'])->name('store-order');
+
 // Route::post('/addproduct', [AdminController::class, 'store']);
+
+Route::get('/discounts', [DiscountController::class, 'index'])->name('discounts.index');

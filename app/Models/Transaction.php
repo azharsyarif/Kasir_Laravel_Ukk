@@ -16,4 +16,9 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionDetail::class);
     }
+
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class); // tambahkan relasi belongsTo
+    }
 }
