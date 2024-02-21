@@ -59,8 +59,13 @@
                             </td>
                             <td class="px-6 py-4">{{ $product->platform }}</td>
                             <td class="px-6 py-4">
-                                @if($product->genre)
-                                    {{ $product->genre->nama_genre }}
+                                @if(optional($product->genres)->isNotEmpty())
+                                    @foreach($product->genres as $genre)
+                                        {{ $genre->nama_genre }}
+                                        @if(!$loop->last)
+                                            <span>, </span>
+                                        @endif
+                                    @endforeach
                                 @else
                                     No Genre
                                 @endif

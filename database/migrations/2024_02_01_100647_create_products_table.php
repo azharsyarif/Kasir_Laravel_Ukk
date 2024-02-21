@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('nama_product');
             $table->string('image');
-            $table->foreignId('genre_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('platform');
             $table->string('harga');
             $table->timestamps();

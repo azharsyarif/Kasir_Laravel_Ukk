@@ -25,8 +25,8 @@ Route::get('/', function () {
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [UserController::class, 'login']);
 
-Route::get('/home', [UserController::class, 'showHomeScreen'])->name('home')->middleware('auth');
 Route::get('/home', [ProductController::class, 'index'])->name('home');
+// Route::get('/create-discount-for-genre-a', [DiscountController::class, 'createDiscountForGenreA']);
 
 
 Route::get('/admin/dashboard', [UserController::class, 'showAdminDashboard'])->middleware('auth')->name('admin.dashboard');
@@ -72,6 +72,7 @@ Route::delete('/admin/discount/{id}', [DiscountController::class, 'deleteDiscoun
 Route::get('/admin/discount-detail/{id}', [DiscountController::class, 'showDiscountDetail'])->name('discount.detail');
 Route::get('/admin/add-discount-genre', [DiscountController::class, 'addGenre'])->name('add.discount-genre');
 Route::post('/admin/add-discount-genre/{discountId}', [DiscountController::class, 'addGenre'])->name('add.discount-genre');
+Route::delete('/admin/discount/{discount_id}/genre/{genre_id}', [DiscountController::class, 'deleteDiscountGenre'])->name('admin.discount.genre.delete');
 
 Route::get('/admin-genre', [AdminController::class, 'showGenreScreen'])->name('genre');
 Route::get('/admin/genre-add', [AdminController::class, 'showAddGenre'])->name('add-genre');

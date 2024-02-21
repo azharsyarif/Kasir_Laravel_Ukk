@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailGenre;
 use App\Models\discount;
 use App\Models\Genre;
 use App\Models\Platform;
@@ -184,42 +185,36 @@ class AdminController extends Controller
     }
 
 
+    
     public function addProduct(Request $request)
-{
-    // Validasi data dari permintaan
-    $validator = Validator::make($request->all(), [
-        'nama_product' => 'required|string|max:255',
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image file
-        'platform' => 'required|string|max:255',
-        'genre_id' => 'required|exists:genres,id', // Pastikan genre_id ada dalam tabel genres
-        'harga' => 'required|string',
-    ]);
-
-    if ($validator->fails()) {
-        // Jika validasi gagal, kembali ke halaman sebelumnya dengan pesan kesalahan
-        return redirect()->back()->withErrors($validator)->withInput();
-    }
-
-    // Handle image upload
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('product_images', 'public');
-
-        // Simpan data produk baru ke database
-        $product = new Product();
+    {
+        $validatedData = $request->validate([
+            'nama_product' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'platform' => 'required',
+            'harga' => 'required',
+            'genres' => 'required|array',
+        ]);
+    
+        $imagePath = $request->file('image')->store('uploads', 'public');
+    
+        $product = new Product;
         $product->nama_product = $request->nama_product;
         $product->image = $imagePath;
         $product->platform = $request->platform;
-        $product->genre_id = $request->genre_id;
         $product->harga = $request->harga;
         $product->save();
-
-        // Redirect to a success page or back to the form with a success message
-        return redirect()->route('product')->with('success', 'Product berhasil dibuat');
-    } else {
-        // Jika gambar tidak diunggah, kembali ke halaman sebelumnya dengan pesan kesalahan
-        return redirect()->back()->with('error', 'Gambar produk wajib diunggah.');
+    
+        // Simpan id produk dan id genre yang dipilih ke tabel pivot
+        foreach ($request->genres as $genreId) {
+            DetailGenre::create([
+                'product_id' => $product->id,
+                'genre_id' => $genreId
+            ]);
+        }
+    
+        return redirect()->route('product')->with('success', 'Product added successfully');
     }
-}
     
 
 
@@ -234,7 +229,7 @@ public function deleteProduct($id)
     }
 
 
-    public function addGenre(Request $request)
+    public function addGenre(Request $request)  
     {
         $validator = Validator::make($request->all(), [
             'nama_genre' => 'required|string',

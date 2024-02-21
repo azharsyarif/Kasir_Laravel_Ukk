@@ -16,19 +16,64 @@ class ProductController extends Controller
 {
     public function index()
     {
-        // Ambil semua data game dari database
-        $product = Product::all();
-
-        // Kirim data game ke tampilan Blade
-        return view('home', ['products' => $product]);
-    }
-
-    // API FUNCTION
-        public function view_api()
-    {
+        // Ambil semua data produk dari database
         $products = Product::all();
-        return view('view_api', ['products' => $products]);
+        
+        // Kirim data produk ke tampilan Blade
+        return view('home', ['products' => $products]);
     }
+//     public function index()
+// {
+//     // Ambil semua data game dari database yang memiliki discount yang aktif pada hari ini
+//     $products = Product::whereHas('genres.discounts', function ($query) {
+//         $today = now()->toDateString();
+//         $query->where('start_date', '<=', $today)
+//             ->where('end_date', '>=', $today);
+//     })->with(['genres' => function ($query) {
+//         $query->with(['discounts' => function ($query) {
+//             $today = now()->toDateString();
+//             $query->where('start_date', '<=', $today)
+//                 ->where('end_date', '>=', $today);
+//         }]);
+//     }])->get();
+    
+//     // Kirim data produk ke tampilan Blade
+//     return view('home', ['products' => $products]);
+// }
+
+
+
+    // public function index(Request $request)
+    // {
+    //     $currentDate = now()->toDateString();
+
+    //     // Mengambil semua data barang dengan eager loading untuk genres
+    //     $barangData = Product::with(['genres' => function ($query) use ($currentDate) {
+    //         $query->with(['discounts' => function ($subQuery) use ($currentDate) {
+    //             $subQuery->where('start_date', '<=', $currentDate)
+    //                 ->where('end_date', '>=', $currentDate);
+    //         }]);
+    //     }])->get();
+
+    //     // Iterasi barangData untuk menghitung harga diskon jika berlaku
+    //     foreach ($barangData as $barang) {
+    //         // Menginisialisasi harga_diskon dengan harga asli
+    //         $barang->harga_diskon = $barang->harga;
+
+    //         $applicableDiscount = $barang->findApplicableDiscount();
+
+    //         // Periksa apakah ada diskon yang berlaku
+    //         if ($applicableDiscount) {
+    //             // Hapus simbol '%' dan konversi menjadi nilai numerik jika perlu
+    //             $persentase_diskon = rtrim($applicableDiscount->persentase_diskon, '%');
+    //             $persentase_diskon = (float) $persentase_diskon / 100; // Konversi menjadi pecahan
+    //             // Hitung harga diskon
+    //             $barang->harga_diskon = $barang->harga - ($barang->harga * $persentase_diskon);
+    //         }
+    //     }
+    //     // Kembalikan data barang yang telah dimodifikasi
+    //     return response()->json($barangData);
+    // }
 
         public function pemesananIndex()
     {
@@ -126,7 +171,7 @@ class ProductController extends Controller
             $request->validate([
                 'nama_product' => 'required|string|max:255',
                 'platform' => 'required|string|max:255',
-                'genre_id' => 'required|exists:genres,id'. $id,
+                'genre_id' => 'required|exists:genres,id',
                 'harga' => 'required|numeric|min:0',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Optional: Validasi gambar jika diubah
             ]);

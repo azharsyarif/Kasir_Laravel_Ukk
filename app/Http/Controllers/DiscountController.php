@@ -3,31 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\discount;
+use App\Models\DiscountDetail;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class DiscountController extends Controller
 {
+
+    public function indexApi()
+{
+    $discountDetails = DiscountDetail::all();
+    return response()->json($discountDetails);
+}
+    
     public function showAddDiscount()
     {
         return view('admins.data-discount.add-discount');
     }
 
     public function showDiscountDetail($id)
-    {
-        // Find the discount based on the provided ID
-        $discount = Discount::findOrFail($id);
+{
+    // Find the discount based on the provided ID
+    $discount = Discount::findOrFail($id);
 
-        // Fetch the genres associated with the discount
-        $genres = $discount->genres;
+    // Fetch the genres associated with the discount
+    $genres = $discount->genres;
 
-        // Fetch available genres (for adding new genre)
-        $availableGenres = Genre::all();
+    // Fetch available genres (for adding new genre)
+    $availableGenres = Genre::all();
 
-        // Pass the discount, its associated genres, and available genres to the view
-        return view('admins.data-discount.detail-discount', compact('discount', 'genres', 'availableGenres'));
-    }
+    // Pass the discount, its associated genres, and available genres to the view
+    return view('admins.data-discount.detail-discount', compact('discount', 'genres', 'availableGenres'));
+}
 
     // public function showAddDiscountForm()
     // {
@@ -80,25 +88,73 @@ class DiscountController extends Controller
 
 
     public function addGenre(Request $request, $discountId)
-    {
-        // Validate the request data
-        $request->validate([
-            'genre' => 'required|exists:genres,id',
-        ]);
+{
+    // Validate the request data
+    $request->validate([
+        'genre' => 'required|exists:genres,id',
+    ]);
 
-        // Find the discount based on the provided ID
-        $discount = Discount::findOrFail($discountId);
+    // Find the discount based on the provided ID
+    $discount = Discount::findOrFail($discountId);
 
-        // Attach the selected genre to the discount
-        $discount->genres()->attach($request->genre);
+    // Attach the selected genre to the discount
+    $genre = Genre::findOrFail($request->genre);
+    $discount->genres()->attach($genre);
 
-        // Redirect back to the detail page
-        return redirect()->route('discount.detail', $discountId)->with('success', 'Genre added successfully.');
-    }
+    // Create discount detail
+    DiscountDetail::create([
+        'discount_id' => $discountId,
+        'genre_id' => $genre->id,
+    ]);
+
+    // Redirect back to the detail page
+    return redirect()->route('discount.detail', $discountId)->with('success', 'Genre added successfully.');
+}
+
 
     public function index()
     {
         $discounts = Discount::with('details')->get();
         return response()->json($discounts);
+    }
+
+    public function deleteDiscountGenre(Request $request, $discount_id, $genre_id)
+{
+    // Temukan diskon berdasarkan ID
+    $discount = Discount::findOrFail($discount_id);
+
+    // Temukan genre berdasarkan ID
+    $genre = Genre::findOrFail($genre_id);
+
+    // Periksa apakah genre ada dalam diskon
+    if (!$discount->genres->contains($genre)) {
+        return redirect()->back()->with('error', 'Genre not found in discount.');
+    }
+
+    // Hapus genre dari diskon
+    $discount->genres()->detach($genre);
+
+    // Hapus detail diskon yang sesuai dari database
+    DiscountDetail::where('discount_id', $discount_id)->where('genre_id', $genre_id)->delete();
+
+    return redirect()->back()->with('success', 'Genre deleted successfully from discount.');
+}
+    public function createDiscountForGenreA()
+    {
+        // Membuat data diskon
+        $discount = Discount::create([
+            'nama_discount' => 'Diskon Genre A',
+            'discount_amount' => 10, // Persentase diskon (misalnya 10%)
+            'start_date' => now(),
+            'end_date' => now()->addDays(30), // Diskon berlaku selama 30 hari
+        ]);
+
+        // Mendapatkan genre dengan ID 1 (misalnya, Genre A)
+        $genreA = Genre::find(1);
+
+        // Menambahkan diskon ke genre tersebut
+        $genreA->discounts()->attach($discount->id);
+
+        return "Diskon 'Diskon Genre A' telah ditambahkan ke Genre A.";
     }
 }

@@ -30,34 +30,84 @@
                     </div>
                 </div>
                 <!-- end header -->
-                <!-- products -->
-                <div class="grid grid-cols-3 gap-4 px-5 mt-5 overflow-y-auto h-3/4">
-                    @if(isset($products) && count($products) > 0)
-                    @foreach ($products as $product)
-                    <div class="px-3 py-3 flex flex-col border border-gray-200 rounded-md h-44 justify-between">
-                        <div>
-                            <div class="font-bold text-gray-800">{{ $product->nama_product }}</div>
-                        </div>
-                        <div class="flex flex-row justify-between items-center">
-                            <span class="self-end font-bold text-lg text-yellow-500">@currency($product->harga)</span>
-                            <img src="{{ $product->image }}" class="h-14 w-14 object-cover rounded-md" alt="">
-                        </div>
-                        <div class="mt-2">
-                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-add-to-cart"
-                                data-product-id="{{ $product->id }}"
-                                data-product-name="{{ $product->nama_product }}"
-                                data-product-price="{{ $product->harga }}"
-                                data-product-image="{{ $product->image }}">
-                                Tambahkan
-                            </button>
-                        </div>
-                    </div>
-                    @endforeach
-                        @else
-                            <div class="text-center text-gray-500">No products available</div>
+<!-- products -->
+<div class="grid grid-cols-3 gap-4 px-5 mt-5 overflow-y-auto h-3/4">
+    @if(isset($products) && count($products) > 0)
+        @foreach ($products as $product)
+            @php
+                $discountPercentage = 0;
+                $discountedPrice = $product->harga;
+                
+                // Cari diskon maksimum untuk setiap genre produk
+                if ($product->genres) {
+                    foreach ($product->genres as $genre) {
+                        if ($genre->discountDetails) {
+                            foreach ($genre->discountDetails as $discountDetail) {
+                                // Hitung diskon maksimum untuk setiap genre
+                                $maxDiscount = $discountDetail->discount->discount_amount;
+                                if ($maxDiscount > $discountPercentage) {
+                                    $discountPercentage = $maxDiscount;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Hitung harga produk setelah diskon
+                if ($discountPercentage > 0) {
+                    $discountedPrice = $product->harga * (1 - $discountPercentage / 100);
+                }
+            @endphp
+            <div class="px-3 py-3 flex flex-col border border-gray-200 rounded-md h-44 justify-between">
+                <div>
+                    <div class="font-bold text-gray-800">{{ $product->nama_product }}</div>
+                    <div class="text-gray-500">
+                        @if ($product->genres)
+                            @foreach ($product->genres as $genre)
+                                {{ $genre->nama_genre }}
+                            @endforeach
                         @endif
+                        @if (!$product->genres || count($product->genres) === 0)
+                            Genre tidak tersedia
+                        @endif
+                    </div> <!-- Menampilkan genre -->
                 </div>
-                <!-- end products -->
+                <div class="flex flex-row justify-between items-center">
+                    @if ($discountPercentage > 0)
+                        <span class="self-end font-bold text-lg text-yellow-500">
+                            {{ $discountPercentage }}% OFF
+                            @currency($discountedPrice)
+                        </span>
+                    @else
+                        <span class="self-end font-bold text-lg">
+                            @currency($product->harga)
+                        </span>
+                    @endif
+                    <img src="{{ $product->image }}" class="h-14 w-14 object-cover rounded-md" alt="">
+                </div>
+                <div class="mt-2">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-add-to-cart"
+                            data-product-id="{{ $product->id }}"
+                            data-product-name="{{ $product->nama_product }}"
+                            data-product-price="{{ $discountedPrice }}"
+                            data-product-image="{{ $product->image }}"
+                            data-product-genre="{{ $genre ? $genre->nama_genre : 'Genre tidak tersedia' }}">
+                        Tambahkan
+                    </button>
+                </div>
+            </div>
+        @endforeach
+    @else
+        <div class="text-center text-gray-500">No products available</div>
+    @endif
+</div>
+<!-- end products -->
+
+
+
+
+
+
             </div>
             <!-- end left section -->
             <!-- right section -->
@@ -77,13 +127,19 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Product Name
+                                    Nama Product
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Price
+                                    Harga
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Discount
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Quantity
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Jumlah
                                 </th>
                             </tr>
                         </thead>
@@ -97,7 +153,7 @@
                 <div class="px-5 mt-5">
                     <div class="py-4 rounded-md shadow-lg">
                         <div class="border-t-2 mt-3 py-2 px-4 flex items-center justify-between">
-                            <span class="font-semibold text-lg">Total Price: <span id="totalAmount">Rp0.00</span>
+                            <span class="font-semibold text-lg">Total Price: <span id="totalAmount">Rp0.00</span></span>
                         </div>
                     </div>
                 </div>
@@ -140,108 +196,108 @@
             let total = 0;
             const totalElement = document.getElementById('totalAmount');
             const orderListBody = document.getElementById('order-list-body');
-
+    
             function updateTotal() {
-    const discountThreshold = 1000000; // Batas total harga untuk mendapatkan diskon
-    const discountPercentage = 0.1; // Persentase diskon (10%)
-
-    let discount = 0;
-    // Periksa apakah total melebihi atau sama dengan ambang batas untuk mendapatkan diskon
-    if (total >= discountThreshold) {
-        // Hitung jumlah diskon
-        discount = total * discountPercentage;
-    }
-
-    // Kurangi diskon dari total harga
-    const totalPriceAfterDiscount = total - discount;
-
-    // Tampilkan total harga setelah diskon
-    totalElement.textContent = formatRupiah(totalPriceAfterDiscount);
-}
-            
+                // Update total harga setelah diskon
+                totalElement.textContent = formatRupiah(total);
+            }
+    
             function formatRupiah(amount) {
                 return `Rp${amount.toLocaleString('id-ID')}`;
             }
-            
-            function addProductToCart(productId, productName, productPrice) {
+    
+            function addProductToCart(productId, productName, productPrice, discountAmount) {
                 const existingOrderItem = orderListBody.querySelector(`.order-item[data-product-id="${productId}"]`);
-                
+    
                 if (existingOrderItem) {
+                    // Jika produk sudah ada dalam keranjang, tambahkan satu ke dalam jumlahnya
                     const quantityElement = existingOrderItem.querySelector('.quantity');
                     const quantity = parseInt(quantityElement.textContent) + 1;
                     quantityElement.textContent = quantity;
                 } else {
+                    // Jika produk belum ada dalam keranjang, tambahkan sebagai item baru
                     const newOrderItem = document.createElement('tr');
                     newOrderItem.classList.add('order-item');
                     newOrderItem.setAttribute('data-product-id', productId);
-                    
+    
                     const productNameCell = document.createElement('td');
                     productNameCell.textContent = productName;
                     productNameCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-                    
+    
                     const productPriceCell = document.createElement('td');
                     productPriceCell.textContent = formatRupiah(productPrice);
                     productPriceCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-                    
+    
+                    const discountCell = document.createElement('td');
+                    const discountText = discountAmount ? (discountAmount + '%') : 'No discount';
+                    discountCell.textContent = discountText;
+                    discountCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+    
                     const quantityCell = document.createElement('td');
                     quantityCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-                    
+    
                     const quantitySpan = document.createElement('span');
                     quantitySpan.textContent = '1';
                     quantitySpan.classList.add('px-2', 'inline-flex', 'text-xs', 'leading-5', 'font-semibold', 'rounded-full', 'bg-green-100', 'text-green-800');
-                    
+    
                     const addButton = document.createElement('button');
                     addButton.textContent = '+';
                     addButton.classList.add('px-2', 'py-1', 'rounded-md', 'bg-green-500', 'text-white', 'font-semibold', 'mr-2', 'btn-add');
                     addButton.addEventListener('click', () => {
+                        // Tambahkan satu ke dalam jumlah produk
                         const quantity = parseInt(quantitySpan.textContent) + 1;
                         quantitySpan.textContent = quantity;
                         total += productPrice;
                         updateTotal();
                     });
-                    
+    
                     const removeButton = document.createElement('button');
                     removeButton.textContent = '-';
                     removeButton.classList.add('px-2', 'py-1', 'rounded-md', 'bg-red-500', 'text-white', 'font-semibold', 'btn-remove');
                     removeButton.addEventListener('click', () => {
+                        // Kurangi satu dari jumlah produk
                         const quantity = parseInt(quantitySpan.textContent);
                         if (quantity > 1) {
                             quantitySpan.textContent = quantity - 1;
                             total -= productPrice;
                             updateTotal();
                         } else {
+                            // Hapus produk dari keranjang jika jumlahnya hanya satu
                             orderListBody.removeChild(newOrderItem);
                             total -= productPrice;
                             updateTotal();
                         }
                     });
-                    
+    
                     quantityCell.appendChild(removeButton);
                     quantityCell.appendChild(quantitySpan);
                     quantityCell.appendChild(addButton);
-                    
+    
                     newOrderItem.appendChild(productNameCell);
                     newOrderItem.appendChild(productPriceCell);
+                    newOrderItem.appendChild(discountCell);
                     newOrderItem.appendChild(quantityCell);
-                    
+    
                     orderListBody.appendChild(newOrderItem);
                 }
-                
+    
                 total += productPrice;
                 updateTotal();
             }
-            
+    
             const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
             addToCartButtons.forEach(button => {
                 button.addEventListener('click', function() {
+                    // Dapatkan informasi produk dari tombol "Tambahkan ke Keranjang"
                     const productId = this.getAttribute('data-product-id');
                     const productName = this.getAttribute('data-product-name');
                     const productPrice = parseFloat(this.getAttribute('data-product-price').replace(/[^\d,]/g, '').replace(/,/g, '.'));
-                    addProductToCart(productId, productName, productPrice);
+                    // Tambahkan produk ke dalam keranjang
+                    addProductToCart(productId, productName, productPrice, 0); // Untuk sementara, discountAmount diatur ke 0 karena belum ditangani di sini
                 });
             });
-                
-                        document.getElementById('payButton').addEventListener('click', function() {
+    
+            document.getElementById('payButton').addEventListener('click', function() {
                 const orderItems = document.querySelectorAll('.order-item');
                 // Periksa apakah ada produk yang dipilih
                 if (orderItems.length === 0) {
@@ -251,51 +307,53 @@
                 }
                 const products = [];
                 orderItems.forEach(item => {
+                    // Dapatkan informasi produk dari setiap item dalam keranjang
                     const productId = item.getAttribute('data-product-id');
                     const productName = item.querySelector('td:first-child').textContent;
                     const productPrice = parseFloat(item.querySelector('td:nth-child(2)').textContent.replace(/[^\d,]/g, '').replace(/,/g, '.'));
                     const quantity = parseInt(item.querySelector('td:last-child span').textContent);
                     products.push({ productId, productName, productPrice, quantity });
                 });
-                
+    
                 const userData = {
-        user_id: document.querySelector('input[name="user_id"]').value,
-        products: products
-    };
-
-    // Kirim data ke server menggunakan AJAX
-    fetch('{{ route("store-order") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(userData)
-})
-    .then(response => {
-        // Handle respons dari server di sini
-        if (response.ok) {
-            console.log('Transaction successful');
-            // Reset order list
-            orderItems.forEach(item => {
-                orderListBody.removeChild(item);
+                    user_id: document.querySelector('input[name="user_id"]').value,
+                    products: products
+                };
+    
+                // Kirim data ke server menggunakan AJAX
+                fetch('{{ route("store-order") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(userData)
+                })
+                .then(response => {
+                    // Handle respons dari server di sini
+                    if (response.ok) {
+                        console.log('Transaction successful');
+                        // Reset order list
+                        orderItems.forEach(item => {
+                            orderListBody.removeChild(item);
+                        });
+                        total = 0;
+                        updateTotal();
+                    } else {
+                        console.error('Transaction failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+    
+                // Menonaktifkan tombol pembayaran sementara permintaan sedang diproses
+                this.disabled = true;
+                // Tambahkan indikator loading atau pesan kepada pengguna
             });
-            total = 0;
-            updateTotal();
-        } else {
-            console.error('Transaction failed');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-
-    // Menonaktifkan tombol pembayaran sementara permintaan sedang diproses
-    this.disabled = true;
-    // Tambahkan indikator loading atau pesan kepada pengguna
-});
         });
     </script>
+    
     
     
 </body>

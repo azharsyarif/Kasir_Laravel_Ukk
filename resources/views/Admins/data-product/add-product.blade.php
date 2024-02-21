@@ -25,14 +25,14 @@
                 <input type="file" id="image" name="image" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" required>
             </div>
             <div class="mb-5">
-                <label for="genre" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Genre</label>
-                <select id="genre" name="genre_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" required>
-                    <option value="" disabled selected>Choose a genre</option>
-                    @foreach ($genres as $genre)
-                        <option value="{{ $genre->id }}">{{ $genre->nama_genre }}</option>
-                    @endforeach
-                </select>                               
-            </div>        
+                <label for="genres" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Genres</label>
+                @foreach ($genres as $genre)
+                    <div>
+                        <input type="checkbox" id="genre_{{ $genre->id }}" name="genres[]" value="{{ $genre->id }}">
+                        <label for="genre_{{ $genre->id }}">{{ $genre->nama_genre }}</label>
+                    </div>
+                @endforeach
+            </div>   
             <div class="mb-5">
                 <label for="platform" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Platform</label>
                 <select id="platform" name="platform" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light">

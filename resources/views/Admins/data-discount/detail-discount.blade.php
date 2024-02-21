@@ -35,7 +35,14 @@
                         <ul>
                             @if($genres)
                                 @foreach($genres as $genre)
-                                    <li>{{ $genre->nama_genre }}</li>
+                                    <li>
+                                        {{ $genre->nama_genre }}
+                                        <form action="{{ route('admin.discount.genre.delete', ['discount_id' => $discount->id, 'genre_id' => $genre->id]) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit">Hapus</button>
+                                        </form>
+                                    </li>
                                 @endforeach
                             @else
                                 <li>No genres found</li>
@@ -44,13 +51,14 @@
                         <!-- Form for adding new genre -->
                         <form action="{{ route('add.discount-genre', $discount->id) }}" method="POST">
                             @csrf
-                            <label for="genre">Add Genre:</label>
-                            <select name="genre" id="genre">
+                            <!-- Form to add genre -->
+                            <!-- Tambahkan input untuk memilih genre -->
+                            <select name="genre">
                                 @foreach($availableGenres as $genre)
                                     <option value="{{ $genre->id }}">{{ $genre->nama_genre }}</option>
                                 @endforeach
                             </select>
-                            <button type="submit">Add</button>
+                            <button type="submit">Add Genre</button>
                         </form>
                     </td>
                 </tr>

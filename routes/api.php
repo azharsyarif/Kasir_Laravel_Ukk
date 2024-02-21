@@ -36,3 +36,7 @@ Route::post('/create-product', [TransactionController::class, 'store'])->name('s
 // Route::post('/addproduct', [AdminController::class, 'store']);
 
 Route::get('/discounts', [DiscountController::class, 'index'])->name('discounts.index');
+
+Route::get('/discount-details', [DiscountController::class, 'indexApi']);
+
+Route::get('/products-with-discount', [ProductController::class, 'getProductsWithDiscount']);

@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DiscountDetail;
+use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-
-
-
-    
-
 
     public function store(Request $request)
     {
