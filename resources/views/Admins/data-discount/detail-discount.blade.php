@@ -23,6 +23,7 @@
                     <th scope="col" class="px-6 py-3">Start Date</th>
                     <th scope="col" class="px-6 py-3">End Date</th>
                     <th scope="col" class="px-6 py-3">Genres</th>
+                    <th scope="col" class="px-6 py-3">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,6 +61,9 @@
                             </select>
                             <button type="submit">Add Genre</button>
                         </form>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{{ route('admin.discount.edit', $discount->id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
                     </td>
                 </tr>
             </tbody>

@@ -3,8 +3,10 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +75,8 @@ Route::get('/admin/discount-detail/{id}', [DiscountController::class, 'showDisco
 Route::get('/admin/add-discount-genre', [DiscountController::class, 'addGenre'])->name('add.discount-genre');
 Route::post('/admin/add-discount-genre/{discountId}', [DiscountController::class, 'addGenre'])->name('add.discount-genre');
 Route::delete('/admin/discount/{discount_id}/genre/{genre_id}', [DiscountController::class, 'deleteDiscountGenre'])->name('admin.discount.genre.delete');
+Route::get('/admin/discount/{id}/edit', [DiscountController::class, 'editDiscount'])->name('admin.discount.edit');
+Route::put('/admin/discount/{id}', [DiscountController::class, 'updateDiscount'])->name('admin.discount.update');
 
 Route::get('/admin-genre', [AdminController::class, 'showGenreScreen'])->name('genre');
 Route::get('/admin/genre-add', [AdminController::class, 'showAddGenre'])->name('add-genre');
@@ -83,7 +87,11 @@ Route::get('/admin/edit-genre/{id}', [GenreController::class, 'edit'])->name('ed
 
 Route::get('/admin/show-users', [AdminController::class, 'showDataPengguna'])->name('admin.showUsers');
 
+Route::get('/admin-transactions', [TransactionController::class, 'indexTransaction'])->name('transactions.index');
+Route::get('/transactions/page/{page}', [TransactionController::class, 'index'])->name('transactions.page');
 
+
+Route::get('/generate-invoice-pdf', [InvoiceController::class, 'generateInvoicePDF'])->name('generate.invoice.pdf');
 
 
 

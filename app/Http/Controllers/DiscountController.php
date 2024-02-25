@@ -22,6 +22,16 @@ class DiscountController extends Controller
         return view('admins.data-discount.add-discount');
     }
 
+    public function editDiscount($id)
+    {
+        // Mengambil data diskon dari database berdasarkan ID
+        $discount = Discount::findOrFail($id);
+    
+        // Mengembalikan view formulir edit dengan data diskon
+        return view('Admins.data-discount.edit-discount', compact('discount'));
+    }
+
+
     public function showDiscountDetail($id)
 {
     // Find the discount based on the provided ID
@@ -77,6 +87,36 @@ class DiscountController extends Controller
         // Redirect to a success page or back to the form with a success message
         return redirect()->route('discount')->with('success', 'Discount berhasil ditambahkan');
     }
+
+    public function updateDiscount(Request $request, $id)
+    {
+        // Validasi data dari permintaan
+        $validator = Validator::make($request->all(), [
+            'nama_discount' => 'required|string',
+            'discount_amount' => 'required|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+    
+        if ($validator->fails()) {
+            // Jika validasi gagal, kembali ke halaman sebelumnya dengan pesan kesalahan
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+    
+        // Mengambil data diskon dari database berdasarkan ID
+        $discount = Discount::findOrFail($id);
+    
+        // Memperbarui data diskon dengan data baru dari permintaan
+        $discount->nama_discount = $request->nama_discount;
+        $discount->discount_amount = $request->discount_amount;
+        $discount->start_date = $request->start_date;
+        $discount->end_date = $request->end_date;
+        $discount->save();
+    
+        // Redirect ke halaman index diskon dengan pesan sukses
+        return redirect()->route('discount.detail', ['id' => $discount->id])->with('success', 'Discount berhasil diperbarui');
+    }
+
 
     public function deleteDiscount($id)
     {

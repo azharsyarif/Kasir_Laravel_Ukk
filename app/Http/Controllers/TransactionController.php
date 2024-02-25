@@ -11,6 +11,34 @@ use Illuminate\Http\Request;
 class TransactionController extends Controller
 {
 
+    // VIEW FUNCTION
+
+    public function indexTransaction()
+    {
+        $transactions = Transaction::all(); // Mengambil semua transaksi dari database
+        return view('Admins.transaction', compact('transactions'));
+    }
+
+
+    public function index()
+    {
+        $transactions = Transaction::with('details')->latest()->get();
+        
+        // Check if the number of transactions is greater than 10
+        if ($transactions->count() > 10) {
+            $transactions = Transaction::with('details')->latest()->paginate(10);
+        }
+        
+        return view('transactions.index', compact('transactions'));
+    }
+
+
+
+
+
+
+
+
     public function store(Request $request)
     {
         // Validasi data yang diterima

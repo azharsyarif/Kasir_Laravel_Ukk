@@ -21,6 +21,10 @@ class Product extends Model
         return $this->hasMany(Discount::class);
     }
 
+    // public function discount()
+    // {
+    //     return $this->belongsTo(Discount::class);
+    // }
 
     // public function product()
     // {

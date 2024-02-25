@@ -37,7 +37,7 @@
             @php
                 $discountPercentage = 0;
                 $discountedPrice = $product->harga;
-                
+
                 // Cari diskon maksimum untuk setiap genre produk
                 if ($product->genres) {
                     foreach ($product->genres as $genre) {
@@ -52,7 +52,7 @@
                         }
                     }
                 }
-                
+
                 // Hitung harga produk setelah diskon
                 if ($discountPercentage > 0) {
                     $discountedPrice = $product->harga * (1 - $discountPercentage / 100);
@@ -76,6 +76,7 @@
                     @if ($discountPercentage > 0)
                         <span class="self-end font-bold text-lg text-yellow-500">
                             {{ $discountPercentage }}% OFF
+                            <span class="text-gray-500 line-through">@currency($product->harga)</span> <!-- Harga asli -->
                             @currency($discountedPrice)
                         </span>
                     @else
@@ -83,7 +84,13 @@
                             @currency($product->harga)
                         </span>
                     @endif
-                    <img src="{{ $product->image }}" class="h-14 w-14 object-cover rounded-md" alt="">
+                    <div>
+                        @if(filter_var($product->image, FILTER_VALIDATE_URL))
+                            <img src="{{ $product->image }}" alt="Product Image" width="100">
+                        @else
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="Product Image" width="100">
+                        @endif
+                    </div>
                 </div>
                 <div class="mt-2">
                     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-add-to-cart"
@@ -101,6 +108,7 @@
         <div class="text-center text-gray-500">No products available</div>
     @endif
 </div>
+
 <!-- end products -->
 
 
@@ -185,6 +193,7 @@
                     </div>
                 </div>
                 <!-- Payment popup -->
+                
                 <!-- end button pay -->
             </div>
             <!-- end right section -->
@@ -333,12 +342,16 @@
                     // Handle respons dari server di sini
                     if (response.ok) {
                         console.log('Transaction successful');
+                        // Tampilkan popup alert
+                        alert('Transaksi berhasil!');
                         // Reset order list
                         orderItems.forEach(item => {
                             orderListBody.removeChild(item);
                         });
                         total = 0;
                         updateTotal();
+                        // Aktifkan kembali tombol "BAYAR"
+                        document.getElementById('payButton').disabled = false;
                     } else {
                         console.error('Transaction failed');
                     }
