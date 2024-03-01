@@ -55,10 +55,15 @@
                             <td class="px-6 py-4">{{ $discount->start_date }}</td>
                             <td class="px-6 py-4">{{ $discount->end_date }}</td>
                             <td class="px-6 py-4">
-                                @if(now()->between($discount->start_date, $discount->end_date))
+                                @if(now()->greaterThan($discount->start_date) && now()->lessThan($discount->end_date))
                                 <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
                                     <span class="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
                                     Available
+                                </span>
+                                @elseif(now()->lessThan($discount->start_date))
+                                <span class="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">
+                                    <span class="w-2 h-2 me-1 bg-yellow-500 rounded-full"></span>
+                                    Coming Soon
                                 </span>
                                 @else
                                 <span class="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">

@@ -29,6 +29,7 @@
                 <thead>
                     <tr>
                         <th class="border border-gray-400 px-4 py-2">No</th>
+                        <th class="border border-gray-400 px-4 py-2">Nama Kasir</th>
                         <th class="border border-gray-400 px-4 py-2">Nama Produk</th>
                         <th class="border border-gray-400 px-4 py-2">Harga</th>
                         <th class="border border-gray-400 px-4 py-2">Jumlah</th>
@@ -38,26 +39,25 @@
                 </thead>
                 <tbody>
                     @foreach ($transactions as $index => $transaction)
-                    <tr>
-                        <td class="border border-gray-400 px-4 py-2">{{ $index + 1 }}</td>
-                        <td class="border border-gray-400 px-4 py-2">
-                            @foreach ($transaction->details as $detail)
-                                {{ $detail->product->nama_product }}<br>
-                            @endforeach
-                        </td>
-                        <td class="border border-gray-400 px-4 py-2">@currency($transaction->details->sum('harga_total'))</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ $transaction->details->sum('qty') }}</td>
-                        <td class="border border-gray-400 px-4 py-2">@currency($transaction->details->sum('harga_total'))</td>
-                        <td class="border border-gray-400 px-4 py-2">{{ $transaction->created_at->format('d-m-Y H:i:s') }}</td>
-                    </tr>
+                        @foreach ($transaction->details as $detail)
+                            <tr>
+                                <td class="border border-gray-400 px-4 py-2">{{ $index + 1 }}</td>
+                                <td class="border border-gray-400 px-4 py-2">
+                                    {{ $transaction->user_id }}
+                                </td> <!-- Tampilkan User ID -->
+                                <td class="border border-gray-400 px-4 py-2">
+                                    {{ $detail->product->nama_product }}
+                                </td>
+                                <td class="border border-gray-400 px-4 py-2">@currency($detail->harga_total)</td>
+                                <td class="border border-gray-400 px-4 py-2">{{ $detail->qty }}</td>
+                                <td class="border border-gray-400 px-4 py-2">@currency($detail->harga_total)</td>
+                                <td class="border border-gray-400 px-4 py-2">{{ $transaction->created_at->format('d-m-Y H:i:s') }}</td>
+                            </tr>
+                        @endforeach
                     @endforeach
                 </tbody>
             </table>
-        </div>
         <!-- Add button to generate PDF -->
-        <div class="mt-5">
-            <a href="{{ route('generate.invoice.pdf') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Generate PDF</a>
-        </div>
     </div>
 </body>
 </html>

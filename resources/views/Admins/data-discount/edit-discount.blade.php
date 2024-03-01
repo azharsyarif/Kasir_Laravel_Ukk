@@ -14,6 +14,7 @@
     <!-- Create a container for the table to apply styling -->
     <!-- Detail Discount -->
 <div class="p-4 sm:ml-64">
+    <h1 class="flex items-center text-5xl font-bold dark:text-white">EDIT<span class="bg-blue-100 text-blue-800 text-2xl font-semibold me-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-2">DISCOUNT</span></h1>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <form action="{{ route('admin.discount.update', $discount->id) }}" method="POST">
             @csrf

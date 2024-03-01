@@ -18,13 +18,14 @@
                 <h1 class="text-3xl font-bold mb-5">Invoice Transaksi</h1>
                 <!-- Add button to generate PDF -->
                 <div class="mb-5">
-                    <a href="{{ route('generate.invoice.pdf') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Generate PDF</a>
+                    <a href="{{ route('generate.invoice.pdf') }}" target="_blank" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Generate PDF</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full border-collapse">
                         <thead>
                             <tr>
                                 <th class="border border-gray-400 px-4 py-2">No</th>
+                                <th class="border border-gray-400 px-4 py-2">Nama Kasir</th>
                                 <th class="border border-gray-400 px-4 py-2">Nama Produk</th>
                                 <th class="border border-gray-400 px-4 py-2">Harga</th>
                                 <th class="border border-gray-400 px-4 py-2">Jumlah</th>
@@ -37,6 +38,9 @@
                                 @foreach ($transaction->details as $detail)
                                     <tr>
                                         <td class="border border-gray-400 px-4 py-2">{{ $index + 1 }}</td>
+                                        <td class="border border-gray-400 px-4 py-2">
+                                            {{ $cashierNames[$index] }}
+                                        </td> <!-- Tampilkan User ID -->
                                         <td class="border border-gray-400 px-4 py-2">
                                             {{ $detail->product->nama_product }}
                                         </td>

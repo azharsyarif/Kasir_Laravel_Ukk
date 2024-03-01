@@ -21,4 +21,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(Discount::class); // tambahkan relasi belongsTo
     }
+
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

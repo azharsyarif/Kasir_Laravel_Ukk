@@ -88,7 +88,10 @@ Route::get('/admin/edit-genre/{id}', [GenreController::class, 'edit'])->name('ed
 Route::get('/admin/show-users', [AdminController::class, 'showDataPengguna'])->name('admin.showUsers');
 
 Route::get('/admin-transactions', [TransactionController::class, 'indexTransaction'])->name('transactions.index');
-Route::get('/transactions/page/{page}', [TransactionController::class, 'index'])->name('transactions.page');
+// Route::get('/transactions/page/{page}', [TransactionController::class, 'index'])->name('transactions.page');
+Route::get('/nota', [TransactionController::class, 'showNota'])->name('nota');
+Route::get('/nota/pdf', [TransactionController::class, 'generatePdf'])->name('nota.pdf');
+
 
 
 Route::get('/generate-invoice-pdf', [InvoiceController::class, 'generateInvoicePDF'])->name('generate.invoice.pdf');

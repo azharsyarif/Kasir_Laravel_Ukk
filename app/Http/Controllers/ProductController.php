@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -166,34 +167,35 @@ class ProductController extends Controller
     }
 
 
-        public function edit(Request $request, $id)
-        {
-            $request->validate([
-                'nama_product' => 'required|string|max:255',
-                'platform' => 'required|string|max:255',
-                'genre_id' => 'required|exists:genres,id',
-                'harga' => 'required|numeric|min:0',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Optional: Validasi gambar jika diubah
-            ]);
+    public function edit(Request $request, $id)
+    {
+        $request->validate([
+            'nama_product' => 'required|string',
+            'platform' => 'required|string',
+            'genre_id' => 'required|exists:genres,id',
+            'harga' => 'required|numeric',
+            'image' => 'nullable|image|max:2048', // optional, max 2MB
+        ]);
 
-            $product = Product::findOrFail($id); // Dapatkan data produk berdasarkan ID
+        $product = Product::findOrFail($id);
 
-            // Update data produk dengan data baru dari request
-            $product->nama_product = $request->nama_product;
-            $product->platform = $request->platform;
-            $product->genre_id = $request->genre_id;
-            $product->harga = $request->harga;
+        $product->nama_product = $request->nama_product;
+        $product->platform = $request->platform;
+        $product->harga = $request->harga;
 
-            // Optional: Jika ada gambar baru diunggah, simpan gambar yang baru
-            if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('product_images');
-                $product->image = $imagePath;
-            }
-
-            $product->save(); // Simpan perubahan
-
-            return redirect()->route('product')->with('success', 'Product updated successfully');
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images/products', 'public');
+            $product->image = $imagePath;
         }
+
+        $product->save();
+
+        // Sync the genre
+        $product->genres()->sync([$request->genre_id]);
+
+        return redirect()->route('product')->with('success', 'Product updated successfully');
+    }
+    
 
 
 /* CREATE BESERTA LOG UNTUK LARAVEL LOG */
