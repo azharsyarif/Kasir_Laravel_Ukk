@@ -18,10 +18,11 @@ class Kernel extends HttpKernel
         'auth' => \App\Http\Middleware\Authenticate::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'check.session' => \App\Http\Middleware\CheckSessionTimeout::class,
+        'role' => \App\Http\Middleware\CheckRole::class,
         // ...
     ];
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
+    // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,

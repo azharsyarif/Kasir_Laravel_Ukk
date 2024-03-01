@@ -28,6 +28,11 @@ class AdminController extends Controller
         // Return the fetched user data
         return $products;
     }
+    public function dashboard()
+    {
+        // Lakukan logika untuk menampilkan halaman dashboard admin
+        return view('Admins.admin-dashboard');
+    }
 
     
     public function showAddPengguna()
