@@ -19,14 +19,7 @@
                 <!-- header -->
                 <div class="flex flex-row justify-between items-center px-5 mt-5">
                     <div class="text-gray-800">
-                        <div class="font-bold text-xl">Simons's BBQ Team</div>
-                        <span class="text-xs">Location ID#SIMON123</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="text-sm text-center mr-4">
-                            <div class="font-light text-gray-500">last synced</div>
-                            <span class="font-semibold">3 mins ago</span>
-                        </div>
+                        <div class="font-bold text-xl">GAME BOI</div>
                     </div>
                 </div>
                 <!-- end header -->
@@ -37,7 +30,6 @@
                             @php
                                 $discountPercentage = 0;
                                 $discountedPrice = $product->harga;
-
                                 // Cari diskon maksimum untuk setiap genre produk
                                 if ($product->genres) {
                                     foreach ($product->genres as $genre) {
@@ -52,7 +44,6 @@
                                         }
                                     }
                                 }
-
                                 // Hitung harga produk setelah diskon
                                 if ($discountPercentage > 0) {
                                     $discountedPrice = $product->harga * (1 - $discountPercentage / 100);
@@ -153,7 +144,7 @@
                     </div>
                 </div>
                 <!-- end total -->
-                <div class="px-5 mt-5">
+                {{-- <div class="px-5 mt-5">
                     <form id="discountForm">
                         <label for="discountInput" class="block text-sm font-medium text-gray-700">Masukkan diskon tambahan (persen):</label>
                         <div class="mt-1 flex rounded-md shadow-sm">
@@ -161,7 +152,7 @@
                             <button type="button" id="deleteDiscountBtn" class="ml-2 px-4 py-2 rounded-md bg-red-100 text-red-500">Delete Discount</button>
                         </div>
                     </form>
-                </div>
+                </div> --}}
                 <!-- cash -->
                 <div class="px-5 mt-5">
                     <div class="rounded-md shadow-lg px-4 py-4">
@@ -198,175 +189,161 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let total = 0;
-            let discountAmount = 0;
-            const totalElement = document.getElementById('totalAmount');
-            const orderListBody = document.getElementById('order-list-body');
-    
-            function updateTotal() {
-                const discountedTotal = total * (1 - (discountAmount / 100));
-                totalElement.textContent = formatRupiah(discountedTotal);
-            }
-    
-            function formatRupiah(amount) {
-                return `Rp${amount.toLocaleString('id-ID')}`;
-            }
-    
-            function addProductToCart(productId, productName, productPrice) {
-                const existingOrderItem = orderListBody.querySelector(`.order-item[data-product-id="${productId}"]`);
-                if (existingOrderItem) {
-                    const quantityElement = existingOrderItem.querySelector('.quantity');
-                    const quantity = parseInt(quantityElement.textContent) + 1;
-                    quantityElement.textContent = quantity;
-                } else {
-                    const newOrderItem = document.createElement('tr');
-                    newOrderItem.classList.add('order-item');
-                    newOrderItem.setAttribute('data-product-id', productId);
-    
-                    const productNameCell = document.createElement('td');
-                    productNameCell.textContent = productName;
-                    productNameCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-    
-                    const productPriceCell = document.createElement('td');
-                    productPriceCell.textContent = formatRupiah(productPrice);
-                    productPriceCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-    
-                    const quantityCell = document.createElement('td');
-                    quantityCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-    
-                    const quantitySpan = document.createElement('span');
-                    quantitySpan.textContent = '1';
-                    quantitySpan.classList.add('px-2', 'inline-flex', 'text-xs', 'leading-5', 'font-semibold', 'rounded-full', 'bg-green-100', 'text-green-800');
-    
-                    const addButton = document.createElement('button');
-                    addButton.textContent = '+';
-                    addButton.classList.add('px-2', 'py-1', 'rounded-md', 'bg-green-500', 'text-white', 'font-semibold', 'mr-2', 'btn-add');
-                    addButton.addEventListener('click', () => {
-                        const quantity = parseInt(quantitySpan.textContent) + 1;
-                        quantitySpan.textContent = quantity;
-                        total += productPrice;
-                        updateTotal();
-                    });
-    
-                    const removeButton = document.createElement('button');
-                    removeButton.textContent = '-';
-                    removeButton.classList.add('px-2', 'py-1', 'rounded-md', 'bg-red-500', 'text-white', 'font-semibold', 'btn-remove');
-                    removeButton.addEventListener('click', () => {
-                        const quantity = parseInt(quantitySpan.textContent);
-                        if (quantity > 1) {
-                            quantitySpan.textContent = quantity - 1;
-                            total -= productPrice;
-                            updateTotal();
-                        } else {
-                            orderListBody.removeChild(newOrderItem);
-                            total -= productPrice;
-                            updateTotal();
-                        }
-                    });
-    
-                    quantityCell.appendChild(removeButton);
-                    quantityCell.appendChild(quantitySpan);
-                    quantityCell.appendChild(addButton);
-    
-                    newOrderItem.appendChild(productNameCell);
-                    newOrderItem.appendChild(productPriceCell);
-                    newOrderItem.appendChild(quantityCell);
-    
-                    orderListBody.appendChild(newOrderItem);
-                }
-    
-                total += productPrice;
-                updateTotal();
-            }
-    
-            const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
-            addToCartButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-product-id');
-                    const productName = this.getAttribute('data-product-name');
-                    const productPrice = parseFloat(this.getAttribute('data-product-price').replace(/[^\d,]/g, '').replace(/,/g, '.'));
-                    addProductToCart(productId, productName, productPrice);
-                });
-            });
-    
-            const discountInput = document.getElementById('discountInput');
-            discountInput.addEventListener('input', function() {
-                const inputDiscount = parseFloat(this.value);
-                if (!isNaN(inputDiscount) && inputDiscount >= 0 && inputDiscount <= 100) {
-                    discountAmount = inputDiscount;
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let total = 0;
+        let discountAmount = 0;
+        const totalElement = document.getElementById('totalAmount');
+        const orderListBody = document.getElementById('order-list-body');
+
+        function updateTotal() {
+            const discountedTotal = total * (1 - (discountAmount / 100));
+            totalElement.textContent = formatRupiah(discountedTotal);
+        }
+
+        function formatRupiah(amount) {
+            return `Rp${amount.toLocaleString('id-ID')}`;
+        }
+
+        function addProductToCart(productId, productName, productPrice, discountPercentage) {
+            const existingOrderItem = orderListBody.querySelector(`.order-item[data-product-id="${productId}"]`);
+            if (existingOrderItem) {
+                const quantityElement = existingOrderItem.querySelector('.quantity');
+                const quantity = parseInt(quantityElement.textContent) + 1;
+                quantityElement.textContent = quantity;
+            } else {
+                const newOrderItem = document.createElement('tr');
+                newOrderItem.classList.add('order-item');
+                newOrderItem.setAttribute('data-product-id', productId);
+
+                const productNameCell = document.createElement('td');
+                productNameCell.textContent = productName;
+                productNameCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+
+                const productPriceCell = document.createElement('td');
+                productPriceCell.textContent = formatRupiah(productPrice);
+                productPriceCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+
+                const quantityCell = document.createElement('td');
+                quantityCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+
+                const quantitySpan = document.createElement('span');
+                quantitySpan.textContent = '1';
+                quantitySpan.classList.add('px-2', 'inline-flex', 'text-xs', 'leading-5', 'font-semibold', 'rounded-full', 'bg-green-100', 'text-green-800');
+
+                const addButton = document.createElement('button');
+                addButton.textContent = '+';
+                addButton.classList.add('px-2', 'py-1', 'rounded-md', 'bg-green-500', 'text-white', 'font-semibold', 'mr-2', 'btn-add');
+                addButton.addEventListener('click', () => {
+                    const quantity = parseInt(quantitySpan.textContent) + 1;
+                    quantitySpan.textContent = quantity;
+                    total += productPrice;
                     updateTotal();
-                }
-            });
-    
-            const deleteDiscountBtn = document.getElementById('deleteDiscountBtn');
-            deleteDiscountBtn.addEventListener('click', function() {
-                discountAmount = 0;
-                document.getElementById('discountInput').value = '';
-                updateTotal();
-            });
-    
-            document.getElementById('payButton').addEventListener('click', function() {
-                const orderItems = document.querySelectorAll('.order-item');
-                if (orderItems.length === 0) {
-                    console.error('Tidak ada produk yang dipilih');
-                    return;
-                }
-                const products = [];
-                orderItems.forEach(item => {
-                    const productId = item.getAttribute('data-product-id');
-                    const productName = item.querySelector('td:first-child').textContent;
-                    const productPrice = parseFloat(item.querySelector('td:nth-child(2)').textContent.replace(/[^\d,]/g, '').replace(/,/g, '.'));
-                    const quantity = parseInt(item.querySelector('td:last-child span').textContent);
-                    products.push({ productId, productName, productPrice, quantity });
                 });
-    
-                const userData = {
-                    user_id: document.querySelector('input[name="user_id"]').value,
-                    products: products
-                };
-    
-                fetch('{{ route("store-order") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify(userData)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        console.log('Transaksi berhasil');
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Transaksi Berhasil',
-                            text: 'Transaksi Anda berhasil diselesaikan!',
-                        }).then((result) => {
-                            window.location.href = '{{ route("nota") }}';
-                        });
-                        orderItems.forEach(item => {
-                            orderListBody.removeChild(item);
-                        });
-                        total = 0;
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = '-';
+                removeButton.classList.add('px-2', 'py-1', 'rounded-md', 'bg-red-500', 'text-white', 'font-semibold', 'btn-remove');
+                removeButton.addEventListener('click', () => {
+                    const quantity = parseInt(quantitySpan.textContent);
+                    if (quantity > 1) {
+                        quantitySpan.textContent = quantity - 1;
+                        total -= productPrice;
                         updateTotal();
-                        document.getElementById('payButton').disabled = false;
                     } else {
-                        console.error('Transaksi gagal');
+                        orderListBody.removeChild(newOrderItem);
+                        total -= productPrice;
+                        updateTotal();
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
                 });
-                this.disabled = true;
-            });
-            document.querySelector('.clear-all-btn').addEventListener('click', function() {
-                orderListBody.innerHTML = '';
-                total = 0;
-                updateTotal();
+
+                quantityCell.appendChild(removeButton);
+                quantityCell.appendChild(quantitySpan);
+                quantityCell.appendChild(addButton);
+
+                newOrderItem.appendChild(productNameCell);
+                newOrderItem.appendChild(productPriceCell);
+                newOrderItem.appendChild(quantityCell);
+
+                orderListBody.appendChild(newOrderItem);
+            }
+
+            total += productPrice;
+            updateTotal();
+        }
+
+        const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                const productName = this.getAttribute('data-product-name');
+                const productPrice = parseFloat(this.getAttribute('data-product-price').replace(/[^\d,]/g, '').replace(/,/g, '.'));
+                addProductToCart(productId, productName, productPrice);
             });
         });
-    </script>
+
+        document.getElementById('payButton').addEventListener('click', function() {
+            const orderItems = document.querySelectorAll('.order-item');
+            if (orderItems.length === 0) {
+                console.error('Tidak ada produk yang dipilih');
+                return;
+            }
+            const products = [];
+            orderItems.forEach(item => {
+                const productId = item.getAttribute('data-product-id');
+                const productName = item.querySelector('td:first-child').textContent;
+                const productPrice = parseFloat(item.querySelector('td:nth-child(2)').textContent.replace(/[^\d,]/g, '').replace(/,/g, '.'));
+                const quantity = parseInt(item.querySelector('td:last-child span').textContent);
+                products.push({ productId, productName, productPrice, quantity });
+            });
+
+            const userData = {
+                user_id: document.querySelector('input[name="user_id"]').value,
+                products: products
+            };
+
+            fetch('{{ route("store-order") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Transaksi berhasil');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Transaksi Berhasil',
+                        text: 'Transaksi Anda berhasil diselesaikan!',
+                    }).then((result) => {
+                        window.location.href = '{{ route("nota") }}';
+                    });
+                    orderItems.forEach(item => {
+                        orderListBody.removeChild(item);
+                    });
+                    total = 0;
+                    updateTotal();
+                    document.getElementById('payButton').disabled = false;
+                } else {
+                    console.error('Transaksi gagal');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            this.disabled = true;
+        });
+
+        document.querySelector('.clear-all-btn').addEventListener('click', function() {
+            orderListBody.innerHTML = '';
+            total = 0;
+            updateTotal();
+        });
+    });
+</script>
+
     
     
 </body>

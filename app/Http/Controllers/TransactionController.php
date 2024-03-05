@@ -170,34 +170,54 @@ public function generatePdf(Request $request)
 
 
     public function store(Request $request)
-    {
-        // Validasi data yang diterima
-        $request->validate([
-            'user_id' => 'required|integer',
-            'products' => 'required|array',
-            'products.*.productId' => 'required|integer',
-            'products.*.productName' => 'required|string',
-            'products.*.productPrice' => 'required|numeric',
-            'products.*.quantity' => 'required|integer|min:1',
+{
+    // Validasi data yang diterima
+    $request->validate([
+        'user_id' => 'required|integer',
+        'products' => 'required|array',
+        'products.*.productId' => 'required|integer',
+        'products.*.productName' => 'required|string',
+        'products.*.productPrice' => 'required|numeric',
+        'products.*.quantity' => 'required|integer|min:1',
+    ]);
+
+    // Mendapatkan ID transaksi yang baru
+    $transactionId = Transaction::create([
+        'user_id' => $request->user_id,
+        'transaction_date' => now(), // Sesuaikan dengan format tanggal yang kamu inginkan
+    ])->id;
+
+    // Proses menyimpan data produk ke tabel transaction_details
+    foreach ($request->products as $product) {
+        // Ambil harga asli produk
+        $productPrice = Product::findOrFail($product['productId'])->harga;
+
+        // Hitung harga total sebelum diskon
+        $totalPrice = $productPrice * $product['quantity'];
+
+        // Hitung harga total setelah diskon tambahan
+        $discountedPrice = $totalPrice * (1 - ($request->additional_discount_percentage / 100));
+
+        // Ambil data diskon produk jika ada
+        $productDiscount = Product::findOrFail($product['productId'])->findApplicableDiscount();
+        $discountPercentage = $productDiscount ? $productDiscount->discount_amount : 0;
+
+        TransactionDetail::create([
+            'transaction_id' => $transactionId,
+            'product_id' => $product['productId'],
+            'qty' => $product['quantity'],
+            'harga_satuan' => $productPrice, // Gunakan harga asli produk
+            'harga_total' => $totalPrice,
+            'persentase_discount' => $discountPercentage, // Simpan persentase diskon produk
+            'additional_discount_percentage' => $request->additional_discount_percentage ?? 0,
+            // Simpan harga total setelah diskon tambahan
+            'harga_total_setelah_diskon' => $discountedPrice,
         ]);
-
-        // Mendapatkan ID transaksi yang baru
-        $transactionId = Transaction::create([
-            'user_id' => $request->user_id,
-            'transaction_date' => now(), // Sesuaikan dengan format tanggal yang kamu inginkan
-        ])->id;
-
-        // Proses menyimpan data produk ke tabel transaction_details
-        foreach ($request->products as $product) {
-            TransactionDetail::create([
-                'transaction_id' => $transactionId,
-                'product_id' => $product['productId'],
-                'qty' => $product['quantity'],
-                'harga_total' => $product['productPrice'] * $product['quantity'],
-            ]);
-        }
-
-        // Beri respons sukses ke klien
-        return response()->json(['message' => 'Order successfully stored'], 200);
     }
+
+    // Beri respons sukses ke klien
+    return response()->json(['message' => 'Order successfully stored'], 200);
+}
+
+    
 }

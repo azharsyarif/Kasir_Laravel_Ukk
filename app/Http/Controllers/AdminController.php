@@ -210,7 +210,7 @@ class AdminController extends Controller
         $product->harga = $request->harga;
         $product->save();
     
-        // Simpan id produk dan id genre yang dipilih ke tabel pivot
+    // Simpan id produk dan id genre yang dipilih ke tabel pivot
         foreach ($request->genres as $genreId) {
             DetailGenre::create([
                 'product_id' => $product->id,

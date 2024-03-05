@@ -14,11 +14,8 @@ return new class extends Migration
         Schema::create('discount_genre_details', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('genre_id');
-            $table->unsignedBigInteger('discount_id');
-
-            $table->foreign('genre_id')->references('id')->on('genres')->onDelete('cascade');
-            $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
+            $table->foreignId('genre_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('discount_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

@@ -65,7 +65,7 @@ class ProductController extends Controller
 
     //         // Periksa apakah ada diskon yang berlaku
     //         if ($applicableDiscount) {
-    //             // Hapus simbol '%' dan konversi menjadi nilai numerik jika perlu
+//             // Hapus simbolwe '%' dan konversi menjadi nilai numerik jika perlu
     //             $persentase_diskon = rtrim($applicableDiscount->persentase_diskon, '%');
     //             $persentase_diskon = (float) $persentase_diskon / 100; // Konversi menjadi pecahan
     //             // Hitung harga diskon

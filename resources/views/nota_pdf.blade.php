@@ -146,8 +146,8 @@
         </table>    
 
         <!-- Display the total price -->
-        <h2>Persentase Diskon Total Transaksi: {{ $totalDiscountPercentage }}%</h2>
-        <h2>Total Harga: Rp{{ number_format($totalPrice, 2) }}</h2>
+        {{-- <h2>Persentase Diskon Total Transaksi: {{ $totalDiscountPercentage }}%</h2> --}}
+        <h2>Total Harga Keseluruhan: Rp{{ number_format($totalPrice, 2) }}</h2>
 
         @php
             // Calculate total discount
@@ -157,7 +157,7 @@
             $totalPriceAfterDiscount = $totalPrice - $totalDiscount;
         @endphp
 
-        <h2>Total Harga Setelah Diskon: Rp{{ number_format($totalPriceAfterDiscount, 2) }}</h2>
+        {{-- <h2>Total Harga Setelah Diskon: Rp{{ number_format($totalPriceAfterDiscount, 2) }}</h2> --}}
     <br>
         <h1 class="items-center">TERIMAH KASIH</h1>
 

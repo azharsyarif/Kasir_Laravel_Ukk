@@ -98,10 +98,10 @@
         </table>    
 
         <!-- Display the total price -->
-        <h2>Persentase Diskon Total Transaksi: {{ $totalDiscountPercentage }}%</h2>
-        <h2>Total Harga: Rp{{ number_format($totalPrice, 2) }}</h2>
+        {{-- <h2>Persentase Diskon Total Transaksi: {{ $totalDiscountPercentage }}%</h2> --}}
+        <h2>Total Harga Keseluruhan: Rp{{ number_format($totalPrice, 2) }}</h2>
 
-        @php
+        {{-- @php
             // Calculate total discount
             $totalDiscount = ($totalDiscountPercentage / 100) * $totalPrice;
 
@@ -109,7 +109,7 @@
             $totalPriceAfterDiscount = $totalPrice - $totalDiscount;
         @endphp
 
-        <h2>Total Harga Setelah Diskon: Rp{{ number_format($totalPriceAfterDiscount, 2) }}</h2>
+        <h2>Total Harga Setelah Diskon: Rp{{ number_format($totalPriceAfterDiscount, 2) }}</h2> --}}
         
         <button type="button" class="transition-all ease-in duration-75 text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
             <a target="blank" href="{{ route('nota.pdf') }}">Print PDF</a>
