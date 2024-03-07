@@ -17,19 +17,26 @@ class TransactionDetail extends Model
     }
 
     public function calculateTotalPriceAfterDiscount()
-    {
-        // Ambil data produk
-        $product = $this->product;
+{
+    // Ambil data produk
+    $product = $this->product;
 
-        // Hitung harga total sebelum diskon
-        $totalPrice = $this->qty * $product->harga; // Menggunakan harga asli produk
+    // Hitung harga total sebelum diskon
+    $totalPrice = $this->qty * $product->harga; // Menggunakan harga asli produk
 
-        // Hitung diskon berdasarkan persentase diskon produk
-        $discountAmount = $product->findApplicableDiscount()->discount_amount;
+    // Temukan diskon yang berlaku
+    $applicableDiscount = $product->findApplicableDiscount();
 
-        // Hitung harga total setelah diskon
+    // Jika diskon ditemukan, hitung harga total setelah diskon
+    if ($applicableDiscount) {
+        $discountAmount = $applicableDiscount->discount_amount;
         $totalPriceAfterDiscount = $totalPrice * (1 - ($discountAmount / 100));
-
-        return $totalPriceAfterDiscount;
+    } else {
+        // Jika tidak ada diskon, harga total setelah diskon sama dengan harga total sebelum diskon
+        $totalPriceAfterDiscount = $totalPrice;
     }
+
+    return $totalPriceAfterDiscount;
+}
+
 }
