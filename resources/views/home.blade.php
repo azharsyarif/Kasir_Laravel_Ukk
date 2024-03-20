@@ -49,48 +49,54 @@
                                     $discountedPrice = $product->harga * (1 - $discountPercentage / 100);
                                 }
                             @endphp
-                            <div class="px-3 py-3 flex flex-col border border-gray-200 rounded-md h-44 justify-between">
-                                <div>
-                                    <div class="font-bold text-gray-800">{{ $product->nama_product }}</div>
-                                    <div class="text-gray-500">
-                                        @if ($product->genres)
-                                            @foreach ($product->genres as $genre)
-                                                {{ $genre->nama_genre }}
-                                            @endforeach
+                            <div class="px-3 py-3 flex flex-col border border-gray-200 rounded-md h-auto">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <div class="font-bold text-gray-800">{{ $product->nama_product }}</div>
+                                        <div class="text-gray-500">
+                                            @if ($product->genres)
+                                                @foreach ($product->genres as $genre)
+                                                    {{ $genre->nama_genre }}
+                                                @endforeach
+                                            @endif
+                                            @if (!$product->genres || count($product->genres) === 0)
+                                                Genre tidak tersedia
+                                            @endif
+                                        </div> <!-- Menampilkan genre -->
+                                    </div>
+                                    <div>
+                                        @if ($discountPercentage > 0)
+                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold leading-none text-yellow-500 bg-yellow-100 rounded">
+                                                {{ $discountPercentage }}% OFF
+                                            </span>
                                         @endif
-                                        @if (!$product->genres || count($product->genres) === 0)
-                                            Genre tidak tersedia
-                                        @endif
-                                    </div> <!-- Menampilkan genre -->
+                                    </div>
                                 </div>
-                                <div class="flex flex-row justify-between items-center">
-                                    @if ($discountPercentage > 0)
-                                        <span class="self-end font-bold text-lg text-yellow-500">
-                                            {{ $discountPercentage }}% OFF
-                                            <span class="text-gray-500 line-through">@currency($product->harga)</span> <!-- Harga asli -->
-                                            @currency($discountedPrice)
-                                        </span>
-                                    @else
-                                        <span class="self-end font-bold text-lg">
-                                            @currency($product->harga)
-                                        </span>
-                                    @endif
+                                <div class="flex justify-between items-center mt-2">
+                                    <div class="text-lg font-bold text-gray-800">
+                                        @if ($discountPercentage > 0)
+                                            <span class="line-through text-gray-500">@currency($product->harga)</span> <!-- Harga asli -->
+                                            <span class="ml-2">@currency($discountedPrice)</span>
+                                        @else
+                                            <span>@currency($product->harga)</span>
+                                        @endif
+                                    </div>
                                     <div>
                                         @if(filter_var($product->image, FILTER_VALIDATE_URL))
-                                            <img src="{{ $product->image }}" alt="Product Image" width="100">
+                                            <img src="{{ $product->image }}" alt="Product Image" class="w-24 h-24 object-cover rounded-md">
                                         @else
-                                            <img src="{{ asset('storage/' . $product->image) }}" alt="Product Image" width="100">
+                                            <img src="{{ asset('storage/' . $product->image) }}" alt="Product Image" class="w-24 h-24 object-cover rounded-md">
                                         @endif
                                     </div>
                                 </div>
                                 <div class="mt-2">
-                                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded btn-add-to-cart"
+                                    <button class="px-4 py-2 text-white font-bold bg-blue-500 rounded btn-add-to-cart"
                                             data-product-id="{{ $product->id }}"
                                             data-product-name="{{ $product->nama_product }}"
                                             data-product-price="{{ $discountedPrice }}"
                                             data-product-image="{{ $product->image }}"
                                             data-product-genre="{{ $genre ? $genre->nama_genre : 'Genre tidak tersedia' }}">
-                                        Tambahkan
+                                        Tambahkan ke Keranjang
                                     </button>
                                 </div>
                             </div>

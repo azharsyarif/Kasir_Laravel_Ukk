@@ -88,28 +88,31 @@ public function generatePdf(Request $request)
     // VIEW FUNCTION
 
     public function indexTransaction()
-{
-    $transactions = Transaction::with('user', 'details')->get(); 
+    {
+        // Retrieve all transactions with user and details relationships
+        $transactions = Transaction::with('user', 'details')->get(); 
+        
+        // Initialize an array to store cashier names
+        $cashierNames = [];
     
-    // Inisialisasi array untuk menyimpan nama kasir
-    $cashierNames = [];
-
-    // Iterasi melalui setiap transaksi
-    foreach ($transactions as $transaction) {
-        if ($transaction->user) {
-            // Jika ada user yang terkait dengan transaksi, ambil namanya
-            $cashierName = $transaction->user->username;
-        } else {
-            // Jika tidak ada user terkait, tandai sebagai Unknown
-            $cashierName = 'Unknown';
+        // Iterate through each transaction
+        foreach ($transactions as $transaction) {
+            if ($transaction->user) {
+                // If there is a user associated with the transaction, retrieve the username
+                $cashierName = $transaction->user->username;
+            } else {
+                // If no user is associated, mark as Unknown
+                $cashierName = 'Unknown';
+            }
+            // Add the cashier's name to the array
+            $cashierNames[] = $cashierName;
         }
-        // Tambahkan nama kasir ke dalam array
-        $cashierNames[] = $cashierName;
+        
+        // Return the view with transactions and cashier names
+        return view('Admins.transaction', compact('transactions', 'cashierNames'));
     }
+    
 
-    // Mengambil semua transaksi dari database
-    return view('Admins.transaction', compact('transactions', 'cashierNames'));
-}
 
 
     public function showNota(Request $request)

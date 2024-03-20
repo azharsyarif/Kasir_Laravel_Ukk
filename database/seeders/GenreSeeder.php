@@ -14,7 +14,7 @@ class GenreSeeder extends Seeder
     public function run(): void
     {
         DB::table('genres')->insert([
-            'nama_genre' => 'ACTION-RPG',
+            'nama_genre' => 'ACTION',
         ]);
         DB::table('genres')->insert([
             'nama_genre' => 'RPG',
@@ -30,6 +30,15 @@ class GenreSeeder extends Seeder
         ]);
         DB::table('genres')->insert([
             'nama_genre' => 'FIGHTING',
+        ]);
+        DB::table('genres')->insert([
+            'nama_genre' => 'SPORT',
+        ]);
+        DB::table('genres')->insert([
+            'nama_genre' => 'ADVENTURE',
+        ]);
+        DB::table('genres')->insert([
+            'nama_genre' => 'SHOOTER',
         ]);
     }
 }

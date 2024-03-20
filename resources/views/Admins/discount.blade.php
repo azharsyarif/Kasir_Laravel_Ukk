@@ -33,9 +33,6 @@
                             PERSENTASE DISCOUNT
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            DISCOUNT NOMINAL
-                        </th>
-                        <th scope="col" class="px-6 py-3">
                             TANGGAL AWAL
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -43,6 +40,9 @@
                         </th>
                         <th scope="col" class="px-6 py-3">
                             STATUS
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            ACTION
                         </th>
                     </tr>
                 </thead>

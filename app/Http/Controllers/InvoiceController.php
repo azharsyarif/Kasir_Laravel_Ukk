@@ -10,31 +10,31 @@ use Dompdf\Options;
 class InvoiceController extends Controller
 {
     public function generateInvoicePDF()
-    {
-        // Ambil data transaksi dari database
-        $transactions = Transaction::all(); // Sesuaikan dengan model dan cara Anda mengambil data transaksi
+{
+    // Ambil data transaksi dari database
+    $transactions = Transaction::with('user', 'details.product')->get();
 
-        // Buat objek Options untuk mengatur preferensi Dompdf
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isPhpEnabled', true);
+    // Buat objek Options untuk mengatur preferensi Dompdf
+    $options = new Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isPhpEnabled', true);
 
-        // Buat objek Dompdf
-        $dompdf = new Dompdf($options);
+    // Buat objek Dompdf
+    $dompdf = new Dompdf($options);
 
-        // Tangkap konten HTML invoice dari blade template
-        $html = view('invoice', compact('transactions'))->render(); // Pastikan Anda sudah membuat view 'invoice.blade.php'
+    // Tangkap konten HTML invoice dari blade template
+    $html = view('invoice', compact('transactions'))->render();
 
-        // Muat konten HTML ke Dompdf
-        $dompdf->loadHtml($html);
+    // Muat konten HTML ke Dompdf
+    $dompdf->loadHtml($html);
 
-        // Set ukuran dan orientasi kertas
-        $dompdf->setPaper('A4', 'portrait');
+    // Set ukuran dan orientasi kertas
+    $dompdf->setPaper('A4', 'portrait');
 
-        // Render PDF (generate)
-        $dompdf->render();
+    // Render PDF (generate)
+    $dompdf->render();
 
-        // Simpan atau tampilkan PDF
-        return $dompdf->stream('invoice.pdf', ['Attachment' => false]);
-    }
+    // Simpan atau tampilkan PDF
+    return $dompdf->stream('invoice.pdf', ['Attachment' => false]);
+}
 }

@@ -31,7 +31,7 @@
                         <th class="border border-gray-400 px-4 py-2">No</th>
                         <th class="border border-gray-400 px-4 py-2">Nama Kasir</th>
                         <th class="border border-gray-400 px-4 py-2">Nama Produk</th>
-                        <th class="border border-gray-400 px-4 py-2">Harga</th>
+                        <th class="border border-gray-400 px-4 py-2">Harga Satuan</th>
                         <th class="border border-gray-400 px-4 py-2">Jumlah</th>
                         <th class="border border-gray-400 px-4 py-2">Total</th>
                         <th class="border border-gray-400 px-4 py-2">Tanggal Transaksi</th>
@@ -43,14 +43,14 @@
                             <tr>
                                 <td class="border border-gray-400 px-4 py-2">{{ $index + 1 }}</td>
                                 <td class="border border-gray-400 px-4 py-2">
-                                    {{ $transaction->user_id }}
+                                    {{ $transaction->user->username ?? 'Unknown' }}
                                 </td> <!-- Tampilkan User ID -->
                                 <td class="border border-gray-400 px-4 py-2">
                                     {{ $detail->product->nama_product }}
                                 </td>
-                                <td class="border border-gray-400 px-4 py-2">@currency($detail->harga_total)</td>
+                                <td class="border border-gray-400 px-4 py-2">@currency($detail->harga_satuan)</td>
                                 <td class="border border-gray-400 px-4 py-2">{{ $detail->qty }}</td>
-                                <td class="border border-gray-400 px-4 py-2">@currency($detail->harga_total)</td>
+                                <td class="border border-gray-400 px-4 py-2">@currency($detail->calculateTotalPriceAfterDiscount())</td>
                                 <td class="border border-gray-400 px-4 py-2">{{ $transaction->created_at->format('d-m-Y H:i:s') }}</td>
                             </tr>
                         @endforeach

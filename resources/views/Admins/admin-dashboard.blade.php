@@ -14,6 +14,7 @@ l<!DOCTYPE html>
     <!-- Create a container for the table to apply styling -->
 
     <div class="p-4 sm:ml-64">
+        <h1>ADMIN | PANEL</h1>
     </div>
 </body>
 </html>
